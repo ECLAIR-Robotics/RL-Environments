@@ -1,7 +1,5 @@
 import pybullet_envs.bullet.minitaur_gym_env as e
 
-
-
 max_step = 1000
 episode_count = 0
 max_episodes = 50
