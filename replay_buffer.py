@@ -1,4 +1,5 @@
 from collections import deque
+from distutils.log import INFO
 import numpy as np
 import torch
 
@@ -18,21 +19,35 @@ class ReplayBuffer():
         """
         self.memory = deque(maxlen=max_transitions)
         return
-    
-    def sample(self, batch_size, replace=False, return_type='numpy'):
+
+    def sample_indices(self, num_samples, replace):
         """
-        Samples a batch of transitions from the buffer
+        Samples a batch of indices from the replay buffer
         """
-        sample_indices = np.random.choice(len(self.memory), batch_size, replace=replace)
-        transitions = [self.memory[i] for i in sample_indices]
-        state, action, reward, next_state, done = zip(*transitions)
+        return np.random.choice(len(self.memory), num_samples, replace=replace) 
+
+    def get_transitions(self, sampled_indices, return_type):
+        """
+        Gets the transitions at the given indices
+        """
+        # Extract the transitionse
+        transitions = [self.memory[i] for i in sampled_indices]
+        state, action, reward, next_state, done, info = zip(*transitions)
         
+        # Data conversions
         if return_type == 'numpy':
-            return np.array(state), np.array(action), np.array(reward), np.array(next_state), np.array(done)
+            return np.array(state), np.array(action), np.array(reward), np.array(next_state), np.array(done), info
         elif return_type == "torch_tensor":
-            return torch.tensor(state), torch.tensor(action), torch.tensor(reward), torch.tensor(next_state), torch.tensor(done)
+            return torch.tensor(state), torch.tensor(action), torch.tensor(reward), torch.tensor(next_state), torch.tensor(done), info
         elif return_type == 'tuple':
-            return state, action, reward, next_state, done
+            return state, action, reward, next_state, done, info
+    
+    def sample_transitions(self, num_samples, replace=False, return_type='numpy'):
+        """
+        Samples a batch of transitions from the replay buffer
+        """
+        sampled_indices = self.sample_indices(num_samples, replace)
+        return self.get_transitions(sampled_indices, return_type)
     
     def clear(self):
         """
@@ -41,7 +56,7 @@ class ReplayBuffer():
         self.memory.clear()
         return
     
-    def append(self, state, action, reward, next_state, done):
+    def append(self, state, action, reward, next_state, done, info=None):
         """
         Adds a new transition to the replay buffer
 
@@ -52,13 +67,12 @@ class ReplayBuffer():
             next_state: the next state of the environment after taking the action
             done: whether the episode has ended after taking the action
         """
-        self.memory.append((state, action, reward, next_state, done))
+        self.memory.append((state, action, reward, next_state, done, info))
         return
     
     def __len__(self):
         return len(self.memory)
     
-
 if __name__ == "__main__":
     buffer = ReplayBuffer(10)
     for i in range(10):
@@ -66,4 +80,3 @@ if __name__ == "__main__":
     state, action, reward, next_state, done = buffer.sample(3)
     print(state)
     print(action)
-    

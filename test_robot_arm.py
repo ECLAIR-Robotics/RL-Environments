@@ -12,7 +12,7 @@ while episode_count < max_episodes:
   action = env.action_space.sample() # your agent here (this takes random actions)
   print(action)
   observation, reward, done, info = env.step(action)
-  # Rest environment if done
+  # Reset environment if done
   if done:
     observation = env.reset()
     episode_count += 1
