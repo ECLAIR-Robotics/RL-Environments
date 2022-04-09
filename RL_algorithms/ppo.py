@@ -1,6 +1,6 @@
-from actor import Actor
-from critic import Critic
-from replay_buffer import ReplayBuffer
+from architectures.actor import Actor
+from architectures.critic import Critic
+from utils.replay_buffer import ReplayBuffer
 from pybullet_envs.bullet.kukaGymEnv import KukaGymEnv
 import torch
 import torch.functional as F

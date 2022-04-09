@@ -1,7 +1,7 @@
 from pybullet_envs.bullet.cartpole_bullet import CartPoleBulletEnv
 import gym
 
-max_step = 1000
+max_step = 100000
 episode_count = 0
 max_episodes = 50
 

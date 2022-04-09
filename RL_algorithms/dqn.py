@@ -130,8 +130,6 @@ losspoints = []
 #model.load_state_dict(save_state['state_dict'])
 #optimizer.load_state_dict(save_state['optimizer'])
 
-
-
 env = CartPoleBulletEnv(renders=True)
 for i_episode in range(5000):
     observation = env.reset()
